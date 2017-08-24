@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/SpreadSheet">
+        <file>Resources/image/SpreadSheet.PNG</file>
+        <file>Resources/image/new.PNG</file>
+    </qresource>
+</RCC>
