@@ -7,8 +7,7 @@
 #include "finddialog.h"
 #include "sortdialog.h"
 #include "CellLocation.h"
-
-class SpreadSheet;
+#include "spreadsheet.h"
 
 class MainWindow : public QMainWindow
 {

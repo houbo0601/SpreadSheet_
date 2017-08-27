@@ -194,4 +194,10 @@ void MainWindow::createStatusBar()
 
 	statusBar()->addWidget(locationLabel);
 	statusBar()->addWidget(formulaLabel, 1);
+
+	connect(m_spreadSheet, SIGNAL(currentCellChanged(int, int, int, int)), 
+		this, SLOT(updateStateBar()));
+	connect(m_spreadSheet, SIGNAL(modified()), 
+		this, SLOT(spreadSheelModified()));
+	updateStateBar();
 }
