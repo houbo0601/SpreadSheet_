@@ -2,7 +2,7 @@
 #include "ui_spreadsheet.h"
 
 SpreadSheet::SpreadSheet(QWidget *parent)
-	: QWidget(parent)
+	: QTableWidget(parent)
 {
 	ui = new Ui::SpreadSheet();
 	ui->setupUi(this);
@@ -17,6 +17,25 @@ SpreadSheet::SpreadSheet(QWidget *parent)
 SpreadSheet::~SpreadSheet()
 {
 	delete ui;
+}
+
+QString SpreadSheet::currentLocation()
+{
+	int iRow = this->currentRow();
+	int iCol = this->currentColumn();
+
+	return QString("%1, %2").arg(iRow).arg(iCol);
+}
+
+QString SpreadSheet::currentFormula()
+{
+	return QString("");
+
+}
+
+bool SpreadSheet::readFile(const QString &filename)
+{
+	return true;
 }
 
 void SpreadSheet::Slot_currentCellChanged(int curRow, int curCol, int preRow, int preCol)

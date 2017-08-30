@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 #include <QPushButton>
+#include<QMessageBox>
+#include<QFileDialog>
 #include "finddialog.h"
 #include "sortdialog.h"
 
@@ -122,11 +124,25 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::newFile()
 {
+	if (okToContinue())
+	{
+		m_spreadSheet->clear();
+		setCurrentFile("");
+	}
 
 }
 
 void MainWindow::open()
 {
+	if (okToContinue())
+	{
+		QString filename = QFileDialog::getOpenFileName(this, tr("Open SpreadSheet"),
+			".", tr("SpreadSheet File (*. sp)"));
+		if (!filename.isEmpty())
+		{
+			loadFile(filename);
+		}
+	}
 }
 
 bool MainWindow::save()
@@ -161,6 +177,8 @@ void MainWindow::about()
 
 void MainWindow::updateStateBar()
 {
+	locationLabel->setText(m_spreadSheet->currentLocation());
+	formulaLabel->setText(m_spreadSheet->currentFormula());
 }
 
 void MainWindow::spreadSheelModified()
@@ -200,4 +218,49 @@ void MainWindow::createStatusBar()
 	connect(m_spreadSheet, SIGNAL(modified()), 
 		this, SLOT(spreadSheelModified()));
 	updateStateBar();
+}
+
+bool MainWindow::okToContinue()
+{
+	if (isWindwoModified())
+	{
+		int r = QMessageBox::warning(this, tr("Sp	readSheet"), tr("The Doc is modified.\n"
+			"Do you want to save your changes?"), QMessageBox::Yes | QMessageBox::No 
+			| QMessageBox::Cancel);
+		if (r == QMessageBox::Yes)
+		{
+			return save();
+		}
+		else if (r == QMessageBox::Cancel)
+		{
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+bool MainWindow::isWindwoModified()
+{
+	return true;
+}
+
+bool MainWindow::loadFile(const QString &fileName)
+{
+	if (!m_spreadSheet->readFile(fileName))
+	{
+		statusBar()->showMessage(tr("Loading Cancle"), 2000);
+		return false;
+	}
+
+	setCurrentFile(fileName);
+	statusBar()->showMessage(tr("File Loaded"));
+	return true;
+
+}
+
+void MainWindow::setCurrentFile(const QString &fileName)
+{
+
 }

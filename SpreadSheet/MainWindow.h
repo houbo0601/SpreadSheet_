@@ -59,6 +59,7 @@ private:
 	void readSettings();
 	void writeSettings();
 	bool okToContinue();
+	bool isWindwoModified();
 	bool loadFile(const QString &fileName);
 	bool saveFile(const QString &fileName);
 	void setCurrentFile(const QString &fileName);

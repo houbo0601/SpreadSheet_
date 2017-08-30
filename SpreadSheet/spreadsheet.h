@@ -2,15 +2,23 @@
 #define SPREADSHEET_H
 
 #include <QWidget>
+#include <QTableWidget>
+#include<QString>
+
 namespace Ui {class SpreadSheet;};
 
-class SpreadSheet : public QWidget
+class SpreadSheet : public QTableWidget
 {
 	Q_OBJECT
 
 public:
 	SpreadSheet(QWidget *parent = 0);
 	~SpreadSheet();
+
+	QString currentLocation();
+	QString currentFormula();
+
+	bool readFile(const QString &filename);
 
 signals:
 	void currentCellChanged(int currentRow, int currentColumn, 
