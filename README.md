@@ -1,2 +1,2 @@
 # SpreadSheet_
-QtGui
+《C++ GUI Qt4编程》中的表格例程
