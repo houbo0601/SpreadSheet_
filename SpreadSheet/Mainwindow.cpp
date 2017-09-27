@@ -14,20 +14,30 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 	QWidget::setWindowIcon(QIcon(":/SpreadSheet/Resources/image/SpreadSheet.PNG"));
+
+	InitDialog();
+
 	createAction();
 	createMenu();
 
-	connect(ui->findButton, SIGNAL(clicked()), this, SLOT(find()));
-	connect(ui->sortButton, SIGNAL(clicked()), this, SLOT(sort()));
-	
-	m_findDialog = new FindDialog();
-	m_sortDialog = new SortDialog();
-	m_cellLocationDialog = new CellLocation();
+	m_spreadSheet = new SpreadSheet();
 
+	QGridLayout *MainLayout = new QGridLayout(ui->centralWidget);
+	MainLayout->addWidget(m_spreadSheet);
+
+	ui->centralWidget->setLayout(MainLayout);
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::InitDialog()
+{
+	m_sortDialog = NULL;
+	m_findDialog = NULL;
+	m_SpreadSheet = NULL;
+
 }
 
 void MainWindow::createAction()
@@ -119,6 +129,15 @@ void MainWindow::createMenu()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	if (okToContinue())
+	{
+		writeSettings();
+		event->accept();
+	}
+	else
+	{
+		event->ignore();
+	}
 
 }
 
@@ -137,7 +156,9 @@ void MainWindow::open()
 	if (okToContinue())
 	{
 		QString filename = QFileDialog::getOpenFileName(this, tr("Open SpreadSheet"),
-			".", tr("SpreadSheet File (*. sp)"));
+			".", tr("SpreadSheet File (*. sp)\n"
+				"Comma-separated values files (*.cvs)\n"
+				"Lotus 1-2-3 files (*.wk1 *.wks)"));
 		if (!filename.isEmpty())
 		{
 			loadFile(filename);
@@ -147,17 +168,45 @@ void MainWindow::open()
 
 bool MainWindow::save()
 {
-	return false;
+	if (!curFile.isEmpty())
+	{
+		return saveAs();
+	}
+	else
+	{
+		return saveFile(curFile);
+	}
+	
 }
 
 bool MainWindow::saveAs()
 {
-	return false;
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save Spreadsheet"),  
+		".",  tr("Spreadsheet files (*.sp)"));
+
+	if (filename.isEmpty())
+	{
+		return false;
+	}
+
+	return saveFile(filename);
 }
 
 void MainWindow::find()
 {
+	if (!m_findDialog)
+	{
+		m_findDialog = new FindDialog(this);
+
+		connect(m_findDialog, SIGNAL(findNext(const Qstring &, Qt::CaseSensitive)), 
+			m_SpreadSheet, SLOT(findNext(const Qstring &, Qt::CaseSensitive)));
+		connect(m_findDialog, SIGNAL(findPrevious(const Qstring &, Qt::CaseSensitive)),
+			m_spreadSheet, SLOT(findPrevious(const Qstring &, Qt::CaseSensitive)));
+	}
+
 	m_findDialog->show();
+	m_findDialog->raise();
+	m_findDialog->isActiveWindow();
 }
 
 void MainWindow::goToCell()
@@ -167,6 +216,10 @@ void MainWindow::goToCell()
 
 void MainWindow::sort()
 {
+	if (!m_sortDialog)
+	{
+		m_sortDialog = new SortDialog(this);
+	}
 	m_sortDialog->setColumnRange('C', 'F');
 	m_sortDialog->show();
 }
@@ -187,6 +240,14 @@ void MainWindow::spreadSheelModified()
 
 void MainWindow::openRcentFile()
 {
+	if (okToContinue())
+	{
+		QAction *action = qobject_cast<QAction *>(sender());
+		if (action)
+		{
+			loadFile(action->data().toString());
+		}
+	}
 }
 
 void MainWindow::createToolBar()
@@ -218,6 +279,11 @@ void MainWindow::createStatusBar()
 	connect(m_spreadSheet, SIGNAL(modified()), 
 		this, SLOT(spreadSheelModified()));
 	updateStateBar();
+}
+
+void MainWindow::writeSettings()
+{
+
 }
 
 bool MainWindow::okToContinue()
@@ -260,7 +326,68 @@ bool MainWindow::loadFile(const QString &fileName)
 
 }
 
+bool MainWindow::saveFile(const QString &fileName)
+{
+	if (!m_spreadSheet->writeFile(fileName))
+	{
+		statusBar()->showMessage(tr("Saving canceled"), 2000);
+		return false;
+	}
+
+	setCurrentFile(fileName);
+	statusBar()->showMessage(tr("File Saved"), 2000);
+	return true;
+
+}
+
 void MainWindow::setCurrentFile(const QString &fileName)
 {
+	curFile = fileName;
+	setWindowModified(false);
 
+	QString showName = tr("Untitled");
+	if (!curFile.isEmpty())
+	{
+		showName = strippedName(curFile);
+		recentFiles.removeAll(curFile);
+		recentFiles.prepend(curFile);
+	}
+
+	setWindowTitle(tr("%1[*] - %2").arg(showName).arg(tr("Spreadsheet")));
+
+}
+
+void MainWindow::updateRecentFileActions()
+{
+	QMutableStringListIterator i(recentFiles);
+	while (i.hasNext())
+	{
+		if (!QFile::exists(i.next()))
+		{
+			i.remove();
+		}
+	}
+	for (int i = 0; i < MaxRecentFile; i++)
+	{
+		if (i < recentFiles.count())
+		{
+			QString text = tr("&%1 %2")
+				.arg(i + 1).arg(strippedName(recentFiles[i]));
+			recentFileAction[i]->setText(text);
+			recentFileAction[i]->setData(recentFiles[i]);
+			recentFileAction[i]->setVisible(true);
+		}
+		else
+		{
+			recentFileAction[i]->setVisible(false);
+		}
+	}
+
+	separatorAction->setVisible(!recentFiles.isEmpty());
+
+}
+
+QString MainWindow::strippedName(const QString &fileName)
+{
+	return QFileInfo(fileName).fileName();
 }

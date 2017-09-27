@@ -38,6 +38,11 @@ bool SpreadSheet::readFile(const QString &filename)
 	return true;
 }
 
+bool SpreadSheet::writeFile(const QString &filename)
+{
+	return true;
+}
+
 void SpreadSheet::Slot_currentCellChanged(int curRow, int curCol, int preRow, int preCol)
 {
 	emit currentCellChanged(curRow, curCol, preRow, preCol);

@@ -17,7 +17,6 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
@@ -32,8 +31,6 @@ public:
     QVBoxLayout *verticalLayout;
     QWidget *widget;
     QHBoxLayout *horizontalLayout;
-    QPushButton *sortButton;
-    QPushButton *findButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -55,16 +52,6 @@ public:
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        sortButton = new QPushButton(widget);
-        sortButton->setObjectName(QStringLiteral("sortButton"));
-
-        horizontalLayout->addWidget(sortButton);
-
-        findButton = new QPushButton(widget);
-        findButton->setObjectName(QStringLiteral("findButton"));
-
-        horizontalLayout->addWidget(findButton);
-
 
         verticalLayout->addWidget(widget);
 
@@ -88,8 +75,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "SpreadSheet", 0));
-        sortButton->setText(QApplication::translate("MainWindow", "sort", 0));
-        findButton->setText(QApplication::translate("MainWindow", "Find", 0));
     } // retranslateUi
 
 };

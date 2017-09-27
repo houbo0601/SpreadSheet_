@@ -36,6 +36,8 @@ private:
 	SpreadSheet *m_spreadSheet;
 	CellLocation *m_cellLocationDialog;
 	SpreadSheet *m_SpreadSheet;
+	QString curFile;
+	QStringList recentFiles;
 
 	enum { MaxRecentFile = 5 };
 	QAction *recentFileAction[MaxRecentFile];
@@ -51,6 +53,7 @@ private:
 	QAction *sortAction;
 	QAction *goToCellAction;
 
+	void InitDialog();
 	void createAction();
 	void createMenu();
 	void createContextMenu();

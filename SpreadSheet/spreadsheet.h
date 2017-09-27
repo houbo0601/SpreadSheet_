@@ -19,6 +19,7 @@ public:
 	QString currentFormula();
 
 	bool readFile(const QString &filename);
+	bool writeFile(const QString &filename);
 
 signals:
 	void currentCellChanged(int currentRow, int currentColumn, 

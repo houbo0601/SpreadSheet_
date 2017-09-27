@@ -42,7 +42,7 @@ FindDialog::FindDialog(QWidget * parent) :
 	rightLayout->addWidget(closeButton);
 	rightLayout->addStretch();
 
-	QVBoxLayout *mainLayout = new	QVBoxLayout();
+	QVBoxLayout *mainLayout = new QVBoxLayout();
 	mainLayout->addLayout(leftLayout);
 	mainLayout->addLayout(rightLayout);
 	setLayout(mainLayout);
