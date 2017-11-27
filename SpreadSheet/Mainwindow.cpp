@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	createAction();
 	createMenu();
+	createToolBar();
 
 	m_spreadSheet = new SpreadSheet();
 	setCentralWidget(m_spreadSheet);
@@ -33,6 +34,7 @@ void MainWindow::InitDialog()
 	m_sortDialog = NULL;
 	m_findDialog = NULL;
 	m_SpreadSheet = NULL;
+	m_cellLocationDialog = NULL;
 
 }
 
@@ -207,7 +209,14 @@ void MainWindow::find()
 
 void MainWindow::goToCell()
 {
-	m_cellLocationDialog->show();
+	if (NULL == m_cellLocationDialog)
+	{
+		m_cellLocationDialog = new CellLocation();
+	}
+	if (NULL != m_cellLocationDialog)
+	{
+		m_cellLocationDialog->show();
+	}
 }
 
 void MainWindow::sort()
@@ -252,7 +261,7 @@ void MainWindow::createToolBar()
 	fileToolBar->addAction(newAction);
 	
 	editToolBar = addToolBar(tr("&Edit"));
-	editToolBar->addAction(cutAction);
+	//editToolBar->addAction(cutAction); 
 	editToolBar->addSeparator();
 	editToolBar->addAction(findAction);
 	editToolBar->addAction(goToCellAction);
