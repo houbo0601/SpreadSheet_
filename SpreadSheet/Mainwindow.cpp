@@ -21,11 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createMenu();
 
 	m_spreadSheet = new SpreadSheet();
-
-	QGridLayout *MainLayout = new QGridLayout(ui->centralWidget);
-	MainLayout->addWidget(m_spreadSheet);
-
-	ui->centralWidget->setLayout(MainLayout);
+	setCentralWidget(m_spreadSheet);
 }
 
 MainWindow::~MainWindow()
